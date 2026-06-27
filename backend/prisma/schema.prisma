@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  email     String   @unique
+  password  String
+  nomor_hp  String?
+  alamat    String?
+  role      String   @default("customer")
+  foto      String?
+  created_at DateTime @default(now())
+  carts     Cart[]
+  wishlists Wishlist[]
+  orders    Order[]
+  reviews   Review[]
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  nama_kategori String
+  products    Product[]
+}
+
+model Product {
+  id          Int             @id @default(autoincrement())
+  nama_produk String
+  slug        String          @unique
+  deskripsi   String
+  harga       Float
+  diskon      Float           @default(0)
+  stok        Int
+  kategori    String
+  berat       Float
+  rating      Float           @default(0)
+  gambar      String
+  terjual     Int             @default(0)
+  created_at  DateTime        @default(now())
+  images      ProductImage[]
+  reviews     Review[]
+  carts       Cart[]
+  wishlists   Wishlist[]
+  orderItems  OrderItem[]
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  product   Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id Int
+  image_url String
+}
+
+model Cart {
+  id         Int     @id @default(autoincrement())
+  user       User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    Int
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id Int
+  qty        Int
+}
+
+model Wishlist {
+  id         Int     @id @default(autoincrement())
+  user       User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    Int
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id Int
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     Int
+  total       Float
+  alamat      String
+  ekspedisi   String
+  pembayaran  String
+  status      String
+  catatan     String?
+  created_at  DateTime    @default(now())
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id         Int     @id @default(autoincrement())
+  order      Order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order_id   Int
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id Int
+  qty        Int
+  harga      Float
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    Int
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id Int
+  rating     Int
+  komentar   String
+  foto       String?
+}
+
+model Voucher {
+  id            Int      @id @default(autoincrement())
+  kode          String   @unique
+  diskon        Float
+  tanggal_mulai DateTime
+  tanggal_berakhir DateTime
+}

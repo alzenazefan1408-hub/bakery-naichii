@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #FFF8F0;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+::selection {
+  background: #D8A47F;
+  color: #fff;
+}
+
+.bg-bakery-pattern {
+  background-image: radial-gradient(circle at 20% 20%, rgba(216, 164, 127, 0.2), transparent 25%), radial-gradient(circle at 80% 30%, rgba(139, 94, 60, 0.12), transparent 22%);
+}
