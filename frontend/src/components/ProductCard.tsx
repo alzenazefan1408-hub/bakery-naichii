@@ -11,7 +11,7 @@ interface ProductCardProps {
   terjual: number;
 }
 
-export default function ProductCard({ id, nama_produk, gambar, harga, diskon, rating, terjual }: ProductCardProps) {
+export default function ProductCard({ id, nama_produk, gambar, harga, diskon, kategori, rating, terjual }: ProductCardProps) {
   const discountPrice = harga - (harga * diskon) / 100;
 
   return (

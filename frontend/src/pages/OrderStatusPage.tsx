@@ -3,13 +3,32 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import api from '../api';
 import OrdersStatusTimeline from '../components/OrdersStatusTimeline';
+import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 export default function OrderStatusPage() {
+  const { user } = useAuth();
   const [orders, setOrders] = useState<any[]>([]);
 
   useEffect(() => {
+    if (!user) return;
     api.get('/orders').then(res => setOrders(res.data.orders)).catch(console.error);
-  }, []);
+  }, [user]);
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-cream">
+        <Navbar />
+        <main className="mx-auto flex min-h-[60vh] max-w-4xl items-center justify-center px-4 py-10 text-center text-brownDark">
+          <div className="rounded-[2rem] bg-white p-8 shadow-sm">
+            <p className="mb-4 text-xl font-semibold">Silakan login untuk melihat status pesanan.</p>
+            <Link to="/login" className="rounded-full bg-brownDark px-6 py-3 text-white">Masuk</Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-cream">

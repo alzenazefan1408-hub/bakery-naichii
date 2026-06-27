@@ -5,6 +5,7 @@ import PromoBanner from '../components/PromoBanner';
 import CategoryGrid from '../components/CategoryGrid';
 import TestimonialSection from '../components/TestimonialSection';
 import ProductCard from '../components/ProductCard';
+import SearchBar from '../components/SearchBar';
 import api from '../api';
 
 interface Product {
@@ -21,12 +22,17 @@ interface Product {
 export default function HomePage() {
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [newProducts, setNewProducts] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchCategory, setSearchCategory] = useState('');
+  const [sortOption, setSortOption] = useState('');
 
   useEffect(() => {
     async function loadProducts() {
       try {
-        const best = await api.get('/products?sort=terlaris');
-        const newest = await api.get('/products?sort=terbaru');
+        const [best, newest] = await Promise.all([
+          api.get('/products?sort=terlaris'),
+          api.get('/products?sort=terbaru')
+        ]);
         setBestSellers(best.data.products.slice(0, 4));
         setNewProducts(newest.data.products.slice(0, 4));
       } catch (error) {
@@ -35,6 +41,22 @@ export default function HomePage() {
     }
     loadProducts();
   }, []);
+
+  useEffect(() => {
+    async function searchProducts() {
+      try {
+        const params = new URLSearchParams();
+        if (searchQuery) params.set('search', searchQuery);
+        if (searchCategory) params.set('category', searchCategory);
+        if (sortOption) params.set('sort', sortOption);
+        const response = await api.get(`/products?${params.toString()}`);
+        setBestSellers(response.data.products.slice(0, 4));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (searchQuery || searchCategory || sortOption) searchProducts();
+  }, [searchQuery, searchCategory, sortOption]);
 
   return (
     <div className="min-h-screen">
